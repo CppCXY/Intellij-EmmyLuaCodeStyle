@@ -11,7 +11,6 @@ import com.intellij.psi.PsiFile
 import com.tang.intellij.lua.lang.LuaLanguage
 
 
-
 class EmmyLuaCodeStyle : AsyncDocumentFormattingService() {
 
     private val FEATURES: MutableSet<FormattingService.Feature> = mutableSetOf(
@@ -33,16 +32,34 @@ class EmmyLuaCodeStyle : AsyncDocumentFormattingService() {
             return object : FormattingTask {
                 override fun run() {
                     val range = ranges.first();
+                    if (range.startOffset == 0 && range.endOffset == documentText.length) {
+                        CodeFormat.runCodeFormat(
+                            request.context.virtualFile?.path,
+                            documentText,
+                            object : ReformatAccept {
+                                override fun accept(s: String) {
+                                    request.onTextReady(s);
+                                }
 
-                    CodeFormat.runCodeFormat(request.context.virtualFile?.path, documentText, object : ReformatAccept {
-                        override fun accept(s: String) {
-                            request.onTextReady(s);
-                        }
+                                override fun error(s: String) {
+                                    request.onError("formatting error", s)
+                                }
+                            })
+                    } else {
+                        CodeFormat.runCodeRangeFormat(
+                            request.context.virtualFile?.path,
+                            range,
+                            documentText,
+                            object : ReformatAccept {
+                                override fun accept(s: String) {
+                                    request.onTextReady(s);
+                                }
 
-                        override fun error(s: String) {
-                            request.onError("formatting error", s)
-                        }
-                    })
+                                override fun error(s: String) {
+                                    request.onError("range formatting error", s)
+                                }
+                            })
+                    }
                 }
 
                 override fun cancel(): Boolean {

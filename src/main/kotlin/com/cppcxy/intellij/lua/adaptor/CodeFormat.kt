@@ -8,8 +8,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.SystemInfoRt
+import com.intellij.openapi.util.TextRange
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.nio.charset.Charset
 
 
 interface ReformatAccept {
@@ -51,6 +53,7 @@ object CodeFormat {
         }
         val commandLine = GeneralCommandLine()
             .withExePath(codeFormat)
+            .withCharset(charset("utf8"))
             .withParameters(
                 "format",
                 "-i",
@@ -90,9 +93,71 @@ object CodeFormat {
 
             override fun processTerminated(event: ProcessEvent) {
                 if (event.exitCode == 0) {
-                    reformatAccept.accept(stdout.toString())
+                    reformatAccept.accept(stdout.toString("utf8"))
                 } else {
-                    reformatAccept.error(stderr.toString())
+                    reformatAccept.error(stderr.toString("utf8"))
+                }
+            }
+        })
+
+        handler.startNotify()
+    }
+
+    fun runCodeRangeFormat(filePath: String?, range: TextRange, text: String, reformatAccept: ReformatAccept) {
+        val codeFormat = codeFormatPath
+
+        val file = File(codeFormat)
+        if (!file.exists()) {
+            return reformatAccept.error("can not find CodeFormat")
+        }
+        val commandLine = GeneralCommandLine()
+            .withExePath(codeFormat)
+            .withCharset(charset("utf8"))
+            .withParameters(
+                "rangeformat",
+                "-i",
+                "--range-offset",
+                "${range.startOffset}:${range.endOffset}",
+                "--complete-output"
+            )
+
+        val workspaceDir = project.basePath?.let { File(it) }
+        if (filePath != null) {
+            commandLine.addParameters(
+                "-d",
+                "-f",
+                filePath
+            )
+            if (workspaceDir?.isDirectory == true) {
+                commandLine.addParameters("-w", workspaceDir.absolutePath)
+            }
+        } else {
+            val root = workspaceDir?.absolutePath + "/.editorconfig"
+            commandLine.addParameters("-c", root)
+        }
+
+        val handler = OSProcessHandler(commandLine)
+        val stdin = handler.processInput
+        stdin.write(text.toByteArray())
+        stdin.flush()
+        stdin.close()
+        val stdout = ByteArrayOutputStream()
+        val stderr = ByteArrayOutputStream()
+
+        handler.addProcessListener(object : ProcessListener {
+            override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+                val bytes = event.text.toByteArray()
+                when (outputType) {
+                    ProcessOutputType.STDERR -> stderr.writeBytes(bytes)
+                    ProcessOutputType.STDOUT -> stdout.writeBytes(bytes)
+                }
+            }
+
+            override fun processTerminated(event: ProcessEvent) {
+                if (event.exitCode == 0) {
+                    reformatAccept.accept(stdout.toString("utf8"))
+                } else {
+                    reformatAccept.error(stderr.toString("utf8"))
                 }
             }
         })
