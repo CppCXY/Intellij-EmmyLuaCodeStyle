@@ -17,7 +17,7 @@ val buildVersion = "231"
 
 val ideaSdkVersion = "2023.1"
 
-val runnerNumber = System.getEnv("RUNNER_NUMBER")
+val runnerNumber = System.getenv("RUNNER_NUMBER")
 
 version = "${emmyluaCodeStyleVersion}.${runnerNumber}-IDEA${buildVersion}"
 
