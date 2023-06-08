@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      CI: true
       IDEA_PUBLISH_TOKEN: ${{ secrets.IDEA_PUBLISH_TOKEN }}
 
     steps:
