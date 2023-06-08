@@ -8,10 +8,18 @@ plugins {
 }
 
 group = "com.cppcxy"
-version = "1.1.6"
 
 val emmyluaCodeStyleVersion = "1.1.6"
+
 val emmyluaCodeStyleProjectUrl = "https://github.com/CppCXY/EmmyLuaCodeStyle"
+
+val buildVersion = "231"
+
+val ideaSdkVersion = "2023.1"
+
+val runnerNumber = System.getProperty("RUNNER_NUMBER")
+
+version = "${emmyluaCodeStyleVersion}.${runnerNumber}-IDEA${buildVersion}"
 
 repositories {
     mavenCentral()
@@ -21,7 +29,7 @@ repositories {
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
     pluginName.set("EmmyLua-CodeStyle")
-    version.set("2023.1")
+    version.set(ideaSdkVersion)
     type.set("IC") // Target IDE Platform
 
     plugins.set(listOf("com.tang:1.4.5-IDEA231"))

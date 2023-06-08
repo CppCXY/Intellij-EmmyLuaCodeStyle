@@ -15,7 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      CI_BUILD_VERSION: build.release.${{ github.run_number }}
       IDEA_PUBLISH_TOKEN: ${{ secrets.IDEA_PUBLISH_TOKEN }}
+      RUNNER_NUMBER: ${{ github.run_number }}
 
     steps:
       - name: Checkout
@@ -37,5 +39,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: v${{ env.CI_BUILD_VERSION }}
+          name: ${{ env.CI_BUILD_VERSION }}
           path: build/distributions/*.zip

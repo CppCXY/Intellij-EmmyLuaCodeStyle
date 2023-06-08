@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      CI: true
       CI_BUILD_VERSION: build.test.${{ github.run_number }}
+      RUNNER_NUMBER: ${{ github.run_number }}
 
     steps:
       - name: Checkout
@@ -34,5 +34,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: v${{ env.CI_BUILD_VERSION }}
+          name: ${{ env.CI_BUILD_VERSION }}
           path: build/distributions/*.zip
