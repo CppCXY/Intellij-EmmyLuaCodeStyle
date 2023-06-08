@@ -31,7 +31,9 @@ jobs:
       - name: Publish
         env:
           IDEA_VER: 231
-        run: ./gradlew publishPlugin
+        run: |
+          chmod 777 gradlew
+          ./gradlew publishPlugin
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.0
