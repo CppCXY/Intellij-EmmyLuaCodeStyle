@@ -11,7 +11,7 @@ import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.openapi.util.TextRange
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.nio.charset.Charset
+
 
 
 interface ReformatAccept {
@@ -21,7 +21,7 @@ interface ReformatAccept {
 
 object CodeFormat {
     private val pluginSource: String?
-        get() = PluginManagerCore.getPlugin(PluginId.getId("com.cppcxy.Intellij-EmmyLuaCodeStyle"))?.path?.path
+        get() = PluginManagerCore.getPlugin(PluginId.getId("com.cppcxy.Intellij-EmmyLuaCodeStyle"))?.pluginPath?.toFile()?.path
 
 
     private val codeFormatPath: String = "$pluginSource/CodeFormat/bin/$codeFormatExe"
