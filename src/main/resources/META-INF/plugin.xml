@@ -2,7 +2,7 @@
 <idea-plugin>
     <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
     <id>com.cppcxy.Intellij-EmmyLuaCodeStyle</id>
-    <idea-version since-build="231" />
+    <idea-version since-build="221" />
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
     <name>EmmyLuaCodeStyle</name>
@@ -14,10 +14,19 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-EmmyLua CodeStyle plugin for Intellij.
-a fun, fast, powerful formatting plugin
-for document see https://github.com/CppCXY/EmmyLuaCodeStyle
+    <strong>EmmyLua CodeStyle plugin for Intellij.</strong>
+    <ul>
+        <li>fun, fast and powerful</li>
+        <li>multi editor support include vscode, intellij, neovim</li>
+        <li>only support configure by <a href="https://github.com/CppCXY/EmmyLuaCodeStyle/blob/master/lua.template.editorconfig">.editorconfig</a></li>
+    </ul>
+    <strong>for document see <a href="https://github.com/CppCXY/EmmyLuaCodeStyle">here</a></strong>
   ]]></description>
+
+    <change-notes><![CDATA[
+    <a href="https://github.com/CppCXY/EmmyLuaCodeStyle/blob/master/CHANGELOG_EN.md">Full changelog</a>
+    ]]>
+    </change-notes>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->

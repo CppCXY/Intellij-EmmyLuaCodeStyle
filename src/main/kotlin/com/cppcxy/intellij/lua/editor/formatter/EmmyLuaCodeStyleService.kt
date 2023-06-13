@@ -14,7 +14,8 @@ import com.tang.intellij.lua.lang.LuaLanguage
 class EmmyLuaCodeStyle : AsyncDocumentFormattingService() {
 
     private val FEATURES: MutableSet<FormattingService.Feature> = mutableSetOf(
-        FormattingService.Feature.FORMAT_FRAGMENTS
+            FormattingService.Feature.AD_HOC_FORMATTING,
+            FormattingService.Feature.FORMAT_FRAGMENTS
     )
 
     override fun getFeatures(): MutableSet<FormattingService.Feature> {
@@ -34,31 +35,31 @@ class EmmyLuaCodeStyle : AsyncDocumentFormattingService() {
                     val range = ranges.first();
                     if (range.startOffset == 0 && range.endOffset == documentText.length) {
                         CodeFormat.runCodeFormat(
-                            request.context.virtualFile?.path,
-                            documentText,
-                            object : ReformatAccept {
-                                override fun accept(s: String) {
-                                    request.onTextReady(s);
-                                }
+                                request.context.virtualFile?.path,
+                                documentText,
+                                object : ReformatAccept {
+                                    override fun accept(s: String) {
+                                        request.onTextReady(s);
+                                    }
 
-                                override fun error(s: String) {
-                                    request.onError("formatting error", s)
-                                }
-                            })
+                                    override fun error(s: String) {
+                                        request.onError("formatting error", s)
+                                    }
+                                })
                     } else {
                         CodeFormat.runCodeRangeFormat(
-                            request.context.virtualFile?.path,
-                            range,
-                            documentText,
-                            object : ReformatAccept {
-                                override fun accept(s: String) {
-                                    request.onTextReady(s);
-                                }
+                                request.context.virtualFile?.path,
+                                range,
+                                documentText,
+                                object : ReformatAccept {
+                                    override fun accept(s: String) {
+                                        request.onTextReady(s);
+                                    }
 
-                                override fun error(s: String) {
-                                    request.onError("range formatting error", s)
-                                }
-                            })
+                                    override fun error(s: String) {
+                                        request.onError("range formatting error", s)
+                                    }
+                                })
                     }
                 }
 
