@@ -7,17 +7,38 @@ plugins {
     id("de.undercouch.download").version("5.3.0")
 }
 
-group = "com.cppcxy"
+data class BuildData(
+        val ideaSDKShortVersion: String,
+        // https://www.jetbrains.com/intellij-repository/releases
+        val ideaSDKVersion: String,
+        val sinceBuild: String,
+        val untilBuild: String,
+        val jvmTarget: String = "17",
+        val targetCompatibilityLevel: JavaVersion = JavaVersion.VERSION_17,
+        // https://github.com/JetBrains/gradle-intellij-plugin/issues/403#issuecomment-542890849
+        val instrumentCodeCompilerVersion: String = ideaSDKVersion,
+        val type: String = "IC"
+)
 
-val emmyluaCodeStyleVersion = "1.2.0"
+val buildDataList = listOf(
+        BuildData(
+                ideaSDKShortVersion = "231",
+                ideaSDKVersion = "2023.1",
+                sinceBuild = "231",
+                untilBuild = "232.*",
+        )
+)
+
+group = "com.cppcxy"
+val emmyluaCodeStyleVersion = "1.2.2"
 
 val emmyluaCodeStyleProjectUrl = "https://github.com/CppCXY/EmmyLuaCodeStyle"
 
-val buildVersion = "231"
+val buildVersion = System.getProperty("IDEA_VER") ?: buildDataList.first().ideaSDKShortVersion
 
-val ideaSdkVersion = "2023.1"
+val buildVersionData = buildDataList.find { it.ideaSDKShortVersion == buildVersion }!!
 
-val runnerNumber = System.getenv("RUNNER_NUMBER")
+val runnerNumber = System.getenv("RUNNER_NUMBER") ?: "Dev"
 
 version = "${emmyluaCodeStyleVersion}.${runnerNumber}-IDEA${buildVersion}"
 
@@ -29,18 +50,18 @@ repositories {
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
     pluginName.set("EmmyLua-CodeStyle")
-    version.set(ideaSdkVersion)
-    type.set("IC") // Target IDE Platform
-
-    plugins.set(listOf("com.tang:1.4.5-IDEA231"))
+    version.set(buildVersionData.ideaSDKVersion)
+    type.set(buildVersionData.type) // Target IDE Platform
+    sandboxDir.set("${project.buildDir}/${buildVersionData.ideaSDKShortVersion}/idea-sandbox")
+    plugins.set(listOf("com.tang:1.4.3-IDEA231"))
 }
 
 task("download", type = Download::class) {
     src(
         arrayOf(
-            "${emmyluaCodeStyleProjectUrl}/releases/download/${emmyluaCodeStyleVersion}/darwin-arm64.zip",
-            "${emmyluaCodeStyleProjectUrl}/releases/download/${emmyluaCodeStyleVersion}/darwin-x64.zip",
-            "${emmyluaCodeStyleProjectUrl}/releases/download/${emmyluaCodeStyleVersion}/linux-x64.zip",
+            "${emmyluaCodeStyleProjectUrl}/releases/download/${emmyluaCodeStyleVersion}/darwin-arm64.tar.gz",
+            "${emmyluaCodeStyleProjectUrl}/releases/download/${emmyluaCodeStyleVersion}/darwin-x64.tar.gz",
+            "${emmyluaCodeStyleProjectUrl}/releases/download/${emmyluaCodeStyleVersion}/linux-x64.tar.gz",
             "${emmyluaCodeStyleProjectUrl}/releases/download/${emmyluaCodeStyleVersion}/win32-x64.zip",
         )
     )
@@ -53,13 +74,13 @@ task("unzip", type = Copy::class) {
     from(zipTree("temp/win32-x64.zip")) {
         into("CodeFormat")
     }
-    from(zipTree("temp/darwin-x64.zip")) {
+    from(tarTree("temp/darwin-x64.tar.gz")) {
         into("CodeFormat")
     }
-    from(zipTree("temp/darwin-arm64.zip")) {
+    from(tarTree("temp/darwin-arm64.tar.gz")) {
         into("CodeFormat")
     }
-    from(zipTree("temp/linux-x64.zip")) {
+    from(tarTree("temp/linux-x64.tar.gz")) {
         into("CodeFormat")
     }
     destinationDir = file("temp")
@@ -87,17 +108,17 @@ task("install", type = Copy::class) {
 }
 
 tasks {
-    // Set the JVM compatibility versions
-    withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
-    }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = buildVersionData.jvmTarget
     }
 
     patchPluginXml {
-        sinceBuild.set("231")
+        sinceBuild.set(buildVersionData.sinceBuild)
+        untilBuild.set(buildVersionData.untilBuild)
+    }
+
+    instrumentCode {
+        compilerVersion.set(buildVersionData.instrumentCodeCompilerVersion)
     }
 
     signPlugin {

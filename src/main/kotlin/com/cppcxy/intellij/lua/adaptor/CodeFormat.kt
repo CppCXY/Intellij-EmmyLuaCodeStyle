@@ -2,6 +2,7 @@ package com.cppcxy.intellij.lua.adaptor
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.*
+import com.intellij.execution.util.ExecUtil
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
