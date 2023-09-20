@@ -22,15 +22,15 @@ data class BuildData(
 
 val buildDataList = listOf(
         BuildData(
-                ideaSDKShortVersion = "231",
-                ideaSDKVersion = "2023.1",
-                sinceBuild = "231",
+                ideaSDKShortVersion = "223",
+                ideaSDKVersion = "2022.3",
+                sinceBuild = "223",
                 untilBuild = "232.*",
         )
 )
 
 group = "com.cppcxy"
-val emmyluaCodeStyleVersion = "1.3.0"
+val emmyluaCodeStyleVersion = "1.3.3"
 
 val emmyluaCodeStyleProjectUrl = "https://github.com/CppCXY/EmmyLuaCodeStyle"
 
@@ -53,7 +53,7 @@ intellij {
     version.set(buildVersionData.ideaSDKVersion)
     type.set(buildVersionData.type) // Target IDE Platform
     sandboxDir.set("${project.buildDir}/${buildVersionData.ideaSDKShortVersion}/idea-sandbox")
-    plugins.set(listOf("com.tang:1.4.3-IDEA231"))
+    plugins.set(listOf("com.tang:1.3.8-IDEA223"))
 }
 
 task("download", type = Download::class) {

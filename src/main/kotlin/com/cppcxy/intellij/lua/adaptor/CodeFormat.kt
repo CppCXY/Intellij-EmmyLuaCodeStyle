@@ -52,6 +52,9 @@ object CodeFormat {
         if (!file.exists()) {
             return reformatAccept.error("can not find CodeFormat")
         }
+        if(!file.canExecute()){
+            file.setExecutable(true)
+        }
         val commandLine = GeneralCommandLine()
             .withExePath(codeFormat)
             .withCharset(charset("utf8"))
