@@ -53,7 +53,9 @@ object CodeFormat {
             return reformatAccept.error("can not find CodeFormat")
         }
         if(!file.canExecute()){
-            file.setExecutable(true)
+            val runtime = Runtime.getRuntime()
+            val process = runtime.exec(arrayOf("chmod", "+x", file.absolutePath))
+            process.waitFor()
         }
         val commandLine = GeneralCommandLine()
             .withExePath(codeFormat)
