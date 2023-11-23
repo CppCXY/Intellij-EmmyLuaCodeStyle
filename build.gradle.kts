@@ -5,8 +5,17 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.7.20"
     id("org.jetbrains.intellij") version "1.13.1"
     id("de.undercouch.download").version("5.3.0")
+    kotlin("plugin.serialization") version "1.5.10"
 }
 
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+}
 data class BuildData(
         val ideaSDKShortVersion: String,
         // https://www.jetbrains.com/intellij-repository/releases
