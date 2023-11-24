@@ -15,15 +15,17 @@ class EmmyLuaCodeStyleAnnotator : ExternalAnnotator<Editor, List<LintData>>() {
         return editor
     }
 
-    override fun doAnnotate(editor: Editor?): List<LintData> {
-        var result = listOf<LintData>()
+    override fun doAnnotate(editor: Editor?): List<LintData>? {
+        var result: List<LintData>? = null
         if (editor != null) {
             val text = editor.document.text
             val ret = CodeFormat.check(null, text)
             if (ret.first) {
                 // 将json字符串转化为LintData
                 val json = ret.second
-                result = Json.decodeFromString<List<LintData>>(json)
+                if (json.isNotEmpty()) {
+                    result = Json.decodeFromString<List<LintData>>(json)
+                }
             }
         }
 
@@ -36,7 +38,7 @@ class EmmyLuaCodeStyleAnnotator : ExternalAnnotator<Editor, List<LintData>>() {
                 val range = lintData.range
                 val start = range.start
                 val end = range.end
-                val startOffset = file.viewProvider.document?.getLineStartOffset(start.line)?.plus(start.character)
+                var startOffset = file.viewProvider.document?.getLineStartOffset(start.line)?.plus(start.character)
                 var endOffset = file.viewProvider.document?.getLineStartOffset(end.line)?.plus(end.character + 1)
                 val length = file.viewProvider.document?.textLength
 
@@ -44,6 +46,13 @@ class EmmyLuaCodeStyleAnnotator : ExternalAnnotator<Editor, List<LintData>>() {
                     if (endOffset >= length) {
                         endOffset = length - 1
                     }
+                    if (startOffset >= endOffset) {
+                        startOffset = endOffset - 1
+                    }
+                    if (startOffset < 0) {
+                        continue
+                    }
+
                     val textRange = TextRange(startOffset, endOffset)
                     holder.newAnnotation(HighlightSeverity.WARNING, lintData.message)
                         .range(textRange)

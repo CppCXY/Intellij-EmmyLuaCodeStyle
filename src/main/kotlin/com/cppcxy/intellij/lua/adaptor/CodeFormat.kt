@@ -2,7 +2,6 @@ package com.cppcxy.intellij.lua.adaptor
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.*
-import com.intellij.execution.util.ExecUtil
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
@@ -204,8 +203,10 @@ object CodeFormat {
                 commandLine.addParameters("-w", workspaceDir.absolutePath)
             }
         } else {
-            val root = workspaceDir?.absolutePath + "/.editorconfig"
-            commandLine.addParameters("-c", root)
+            val configFile = workspaceDir?.absolutePath + "/.editorconfig"
+            if (File(configFile).exists()) {
+                commandLine.addParameters("-c", configFile)
+            }
         }
 
         val handler = OSProcessHandler(commandLine)
