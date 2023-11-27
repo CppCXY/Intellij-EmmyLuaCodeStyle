@@ -1,5 +1,6 @@
 package com.cppcxy.intellij.lua.adaptor
 
+import com.cppcxy.intellij.lua.settings.EmmyLuaCodeStyleSettings
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.*
 import com.intellij.ide.plugins.PluginManagerCore
@@ -53,7 +54,7 @@ object CodeFormat {
         }
         if (!file.canExecute()) {
             val runtime = Runtime.getRuntime()
-            val process = runtime.exec(arrayOf("chmod", "+x", file.absolutePath))
+            val process = runtime.exec(arrayOf("chmod", "u+x", file.absolutePath))
             process.waitFor()
         }
         val commandLine = GeneralCommandLine()
@@ -180,7 +181,7 @@ object CodeFormat {
 
         if (!file.canExecute()) {
             val runtime = Runtime.getRuntime()
-            val process = runtime.exec(arrayOf("chmod", "+x", file.absolutePath))
+            val process = runtime.exec(arrayOf("chmod", "u+x", file.absolutePath))
             process.waitFor()
         }
         val commandLine = GeneralCommandLine()
@@ -191,6 +192,10 @@ object CodeFormat {
                 "-i",
                 "--dump-json"
             )
+
+        if (EmmyLuaCodeStyleSettings.getInstance().nameStyleCheck) {
+            commandLine.addParameters("--name-style")
+        }
 
         val workspaceDir = project.basePath?.let { File(it) }
         if (filePath != null) {
@@ -206,6 +211,10 @@ object CodeFormat {
             val configFile = workspaceDir?.absolutePath + "/.editorconfig"
             if (File(configFile).exists()) {
                 commandLine.addParameters("-c", configFile)
+            } else if (EmmyLuaCodeStyleSettings.getInstance().globalConfigPath.isNotEmpty()
+                && File(EmmyLuaCodeStyleSettings.getInstance().globalConfigPath).exists()
+            ) {
+                commandLine.addParameters("-c", EmmyLuaCodeStyleSettings.getInstance().globalConfigPath)
             }
         }
 

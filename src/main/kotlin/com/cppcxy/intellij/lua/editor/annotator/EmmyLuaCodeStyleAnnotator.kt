@@ -5,18 +5,23 @@ import com.intellij.lang.annotation.ExternalAnnotator
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
 import com.cppcxy.intellij.lua.adaptor.CodeFormat
+import com.cppcxy.intellij.lua.settings.EmmyLuaCodeStyleSettings
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.util.TextRange
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class EmmyLuaCodeStyleAnnotator : ExternalAnnotator<Editor, List<LintData>>() {
-    override fun collectInformation(file: PsiFile, editor: Editor, hasErrors: Boolean): Editor? {
+    override fun collectInformation(file: PsiFile, editor: Editor, hasErrors: Boolean): Editor {
         return editor
     }
 
     override fun doAnnotate(editor: Editor?): List<LintData>? {
         var result: List<LintData>? = null
+        if(!EmmyLuaCodeStyleSettings.getInstance().codeStyleCheck){
+            return result
+        }
+
         if (editor != null) {
             val text = editor.document.text
             val ret = CodeFormat.check(null, text)

@@ -38,5 +38,14 @@
     <extensions defaultExtensionNs="com.intellij">
         <formattingService implementation="com.cppcxy.intellij.lua.editor.formatter.EmmyLuaCodeStyle"/>
         <externalAnnotator language="Lua" implementationClass="com.cppcxy.intellij.lua.editor.annotator.EmmyLuaCodeStyleAnnotator" />
+        <applicationService
+                serviceImplementation="com.cppcxy.intellij.lua.settings.EmmyLuaCodeStyleSettings"/>
+        <applicationConfigurable
+                groupId="language"
+                instance="com.cppcxy.ide.setting.EmmyLuaCodeStyleSettingsPanel"
+                displayName="EmmyLuaCodeStyle Settings"
+                id="EmmyLuaCodeStyle.Settings"
+        >
+        </applicationConfigurable>
     </extensions>
 </idea-plugin>
