@@ -39,7 +39,7 @@ val buildDataList = listOf(
 )
 
 group = "com.cppcxy"
-val emmyluaCodeStyleVersion = "1.5.1"
+val emmyluaCodeStyleVersion = "1.5.0"
 
 val emmyluaCodeStyleProjectUrl = "https://github.com/CppCXY/EmmyLuaCodeStyle"
 
