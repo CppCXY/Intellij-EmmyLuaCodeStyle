@@ -34,12 +34,12 @@ val buildDataList = listOf(
                 ideaSDKShortVersion = "223",
                 ideaSDKVersion = "2022.3",
                 sinceBuild = "223",
-                untilBuild = "241.*",
+                untilBuild = "242.*",
         )
 )
 
 group = "com.cppcxy"
-val emmyluaCodeStyleVersion = "1.5.0"
+val emmyluaCodeStyleVersion = "1.5.4"
 
 val emmyluaCodeStyleProjectUrl = "https://github.com/CppCXY/EmmyLuaCodeStyle"
 
